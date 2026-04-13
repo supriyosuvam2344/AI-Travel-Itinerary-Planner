@@ -672,10 +672,21 @@ export default function App() {
                                   </div>
                                   <h4 className="text-xl font-bold text-brand-50 mb-2">{activity.title}</h4>
                                   <p className="text-brand-400 leading-relaxed mb-3">{activity.description}</p>
-                                  <div className="flex items-center gap-2 text-brand-500 text-sm">
+                                  {/* <div className="flex items-center gap-2 text-brand-500 text-sm">
                                     <MapPin className="w-4 h-4 shrink-0" />
                                     {activity.location}
-                                  </div>
+                                  </div> */}
+                                  <a 
+                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activity.location + ', ' + itinerary.destination)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-brand-500 text-sm hover:text-brand-300 transition-colors w-fit group"
+                                  >
+                                    <MapPin className="w-4 h-4 shrink-0 group-hover:scale-110 transition-transform" />
+                                    <span className="underline underline-offset-4 decoration-transparent group-hover:decoration-brand-500 transition-all">
+                                      {activity.location}
+                                    </span>
+                                  </a>
                                 </div>
                               ))}
                             </div>
