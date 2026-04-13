@@ -1,0 +1,5 @@
+{
+  "name": "VoyageAI",
+  "description": "AI-powered travel itinerary generator that suggests destinations and plans based on your preferences and budget.",
+  "requestFramePermissions": []
+}
