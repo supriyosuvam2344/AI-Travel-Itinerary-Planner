@@ -120,17 +120,129 @@ export default function App() {
     doc.save(fileName);
   };
 
+  // const handleGenerate = async () => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     // 1. YOUR NEW EXPERT PROMPT
+
+  //     // for budget X no. of people
+  //     // You are an expert AI Travel Planner. Generate a detailed travel itinerary for ${formData.destination} for ${formData.duration} days for a group of ${formData.travelers} traveler(s). 
+  //     // The budget is ₹${formData.budget} INR PER PERSON. This means your total allowed group budget is ₹${formData.budget * formData.travelers} INR. Please design the trip using this total combined figure. Please provide all costs and budget figures in Indian Rupees (INR). The traveler(s) are looking for ${formData.interests.length > 0 ? formData.interests.join(", ") : "general"} activities.
+
+  //     // for total budget / no. of people
+  //     const prompt = `You are an expert AI Travel Planner. Generate a detailed travel itinerary for ${formData.destination} for ${formData.duration} days for a group of ${formData.travelers} traveler(s). 
+  //     The absolute maximum TOTAL budget for the ENTIRE GROUP combined is ₹${formData.budget} INR. You must divide this total budget realistically among the ${formData.travelers} people. Please provide all costs and budget figures in Indian Rupees (INR). The traveler(s) are looking for ${formData.interests.length > 0 ? formData.interests.join(", ") : "general"} activities.
+      
+  //     Your response must be a valid JSON object matching this structure:
+  //     {
+  //       "destination": string,
+  //       "duration": number,
+  //       "budget": string,
+  //       "totalEstimatedCost": string,
+  //       "currency": string,
+  //       "dailyPlans": [
+  //         {
+  //           "day": number,
+  //           "theme": string,
+  //           "activities": [
+  //             {
+  //               "time": string,
+  //               "title": string,
+  //               "description": string,
+  //               "cost": string,
+  //               "location": string
+  //             }
+  //           ]
+  //         }
+  //       ],
+  //       "travelTips": string[],
+  //       "budgetBreakdown": {
+  //         "accommodation": string,
+  //         "food": string,
+  //         "activities": string,
+  //         "transport": string
+  //       }
+  //     }
+      
+  //     Use your knowledge of local prices and popular spots. Group activities logically (clustering) and ensure the total cost fits within the budget (regression-like estimation).`;
+
+  //     // 2. YOUR EXACT JSON SCHEMA ENFORCEMENT
+  //     const response = await ai.models.generateContent({
+  //       model: "gemini-2.5-flash",
+  //       contents: prompt,
+  //       config: {
+  //         responseMimeType: "application/json",
+  //         responseSchema: {
+  //           type: Type.OBJECT,
+  //           properties: {
+  //             destination: { type: Type.STRING },
+  //             duration: { type: Type.NUMBER },
+  //             budget: { type: Type.STRING },
+  //             totalEstimatedCost: { type: Type.STRING },
+  //             currency: { type: Type.STRING },
+  //             dailyPlans: {
+  //               type: Type.ARRAY,
+  //               items: {
+  //                 type: Type.OBJECT,
+  //                 properties: {
+  //                   day: { type: Type.NUMBER },
+  //                   theme: { type: Type.STRING },
+  //                   activities: {
+  //                     type: Type.ARRAY,
+  //                     items: {
+  //                       type: Type.OBJECT,
+  //                       properties: {
+  //                         time: { type: Type.STRING },
+  //                         title: { type: Type.STRING },
+  //                         description: { type: Type.STRING },
+  //                         cost: { type: Type.STRING },
+  //                         location: { type: Type.STRING }
+  //                       }
+  //                     }
+  //                   }
+  //                 }
+  //               }
+  //             },
+  //             travelTips: {
+  //               type: Type.ARRAY,
+  //               items: { type: Type.STRING }
+  //             },
+  //             budgetBreakdown: {
+  //               type: Type.OBJECT,
+  //               properties: {
+  //                 accommodation: { type: Type.STRING },
+  //                 food: { type: Type.STRING },
+  //                 activities: { type: Type.STRING },
+  //                 transport: { type: Type.STRING }
+  //               }
+  //             }
+  //           },
+  //           required: ["destination", "dailyPlans", "budgetBreakdown"]
+  //         }
+  //       }
+  //     });
+
+  //     if (!response.text) {
+  //       throw new Error("No response from AI");
+  //     }
+
+  //     const data = JSON.parse(response.text);
+  //     setItinerary(data);
+  //     setActiveTab(1);
+  //     setStep('result');
+  //   } catch (err) {
+  //     console.error('Error:', err);
+  //     setError(err.message || "Failed to generate itinerary. Please check your API key and try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleGenerate = async () => {
     setLoading(true);
     setError(null);
     try {
-      // 1. YOUR NEW EXPERT PROMPT
-
-      // for budget X no. of people
-      // You are an expert AI Travel Planner. Generate a detailed travel itinerary for ${formData.destination} for ${formData.duration} days for a group of ${formData.travelers} traveler(s). 
-      // The budget is ₹${formData.budget} INR PER PERSON. This means your total allowed group budget is ₹${formData.budget * formData.travelers} INR. Please design the trip using this total combined figure. Please provide all costs and budget figures in Indian Rupees (INR). The traveler(s) are looking for ${formData.interests.length > 0 ? formData.interests.join(", ") : "general"} activities.
-
-      // for total budget / no. of people
       const prompt = `You are an expert AI Travel Planner. Generate a detailed travel itinerary for ${formData.destination} for ${formData.duration} days for a group of ${formData.travelers} traveler(s). 
       The absolute maximum TOTAL budget for the ENTIRE GROUP combined is ₹${formData.budget} INR. You must divide this total budget realistically among the ${formData.travelers} people. Please provide all costs and budget figures in Indian Rupees (INR). The traveler(s) are looking for ${formData.interests.length > 0 ? formData.interests.join(", ") : "general"} activities.
       
@@ -167,78 +279,104 @@ export default function App() {
       
       Use your knowledge of local prices and popular spots. Group activities logically (clustering) and ensure the total cost fits within the budget (regression-like estimation).`;
 
-      // 2. YOUR EXACT JSON SCHEMA ENFORCEMENT
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              destination: { type: Type.STRING },
-              duration: { type: Type.NUMBER },
-              budget: { type: Type.STRING },
-              totalEstimatedCost: { type: Type.STRING },
-              currency: { type: Type.STRING },
-              dailyPlans: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    day: { type: Type.NUMBER },
-                    theme: { type: Type.STRING },
-                    activities: {
-                      type: Type.ARRAY,
-                      items: {
-                        type: Type.OBJECT,
-                        properties: {
-                          time: { type: Type.STRING },
-                          title: { type: Type.STRING },
-                          description: { type: Type.STRING },
-                          cost: { type: Type.STRING },
-                          location: { type: Type.STRING }
-                        }
+      // 1. EXTRACT SCHEMA CONFIGURATION (So we don't have to write it twice)
+      const generationConfig = {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            destination: { type: Type.STRING },
+            duration: { type: Type.NUMBER },
+            budget: { type: Type.STRING },
+            totalEstimatedCost: { type: Type.STRING },
+            currency: { type: Type.STRING },
+            dailyPlans: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  day: { type: Type.NUMBER },
+                  theme: { type: Type.STRING },
+                  activities: {
+                    type: Type.ARRAY,
+                    items: {
+                      type: Type.OBJECT,
+                      properties: {
+                        time: { type: Type.STRING },
+                        title: { type: Type.STRING },
+                        description: { type: Type.STRING },
+                        cost: { type: Type.STRING },
+                        location: { type: Type.STRING }
                       }
                     }
                   }
                 }
-              },
-              travelTips: {
-                type: Type.ARRAY,
-                items: { type: Type.STRING }
-              },
-              budgetBreakdown: {
-                type: Type.OBJECT,
-                properties: {
-                  accommodation: { type: Type.STRING },
-                  food: { type: Type.STRING },
-                  activities: { type: Type.STRING },
-                  transport: { type: Type.STRING }
-                }
               }
             },
-            required: ["destination", "dailyPlans", "budgetBreakdown"]
-          }
+            travelTips: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            },
+            budgetBreakdown: {
+              type: Type.OBJECT,
+              properties: {
+                accommodation: { type: Type.STRING },
+                food: { type: Type.STRING },
+                activities: { type: Type.STRING },
+                transport: { type: Type.STRING }
+              }
+            }
+          },
+          required: ["destination", "dailyPlans", "budgetBreakdown"]
         }
-      });
+      };
 
-      if (!response.text) {
-        throw new Error("No response from AI");
+      let response;
+
+      // 2. THE FALLBACK ARCHITECTURE
+      try {
+        // Attempt 1: Try the heavier Pro model first
+        console.log("Attempting Primary Model (Pro)...");
+        response = await ai.models.generateContent({
+          model: "gemini-1.5-pro",
+          contents: prompt,
+          config: generationConfig
+        });
+      } catch (primaryError) {
+        console.warn("Primary model failed. Triggering automated fallback to Flash...", primaryError);
+        
+        try {
+          // Attempt 2: If Pro is overloaded (503 error), immediately fallback to Flash
+          console.log("Attempting Fallback Model (Flash)...");
+          response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            config: generationConfig
+          });
+        } catch (fallbackError) {
+          // Attempt 3: Total server failure
+          console.error("Critical: Both AI models failed.", fallbackError);
+          throw new Error("Our AI servers are experiencing extremely high traffic right now. Please try generating your trip again in a few moments!");
+        }
+      }
+
+      if (!response || !response.text) {
+        throw new Error("No data returned from AI servers.");
       }
 
       const data = JSON.parse(response.text);
       setItinerary(data);
       setActiveTab(1);
       setStep('result');
+      
     } catch (err) {
       console.error('Error:', err);
-      setError(err.message || "Failed to generate itinerary. Please check your API key and try again.");
+      setError(err.message || "Failed to generate itinerary. Please check your network and try again.");
     } finally {
       setLoading(false);
     }
   };
-
+  
   const toggleInterest = (interest) => {
     setFormData(prev => ({
       ...prev,
