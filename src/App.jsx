@@ -338,7 +338,7 @@ export default function App() {
         // Attempt 1: Try the heavier Pro model first
         console.log("Attempting Primary Model (Pro)...");
         response = await ai.models.generateContent({
-          model: "gemini-1.5-pro",
+          model: "gemini-2.5-pro",
           contents: prompt,
           config: generationConfig
         });
@@ -349,7 +349,7 @@ export default function App() {
           // Attempt 2: If Pro is overloaded (503 error), immediately fallback to Flash
           console.log("Attempting Fallback Model (Flash)...");
           response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-1.5-flash",
             contents: prompt,
             config: generationConfig
           });
@@ -376,7 +376,7 @@ export default function App() {
       setLoading(false);
     }
   };
-  
+
   const toggleInterest = (interest) => {
     setFormData(prev => ({
       ...prev,
