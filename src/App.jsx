@@ -637,19 +637,19 @@ export default function App() {
                   <p className="text-brand-400 mb-8 text-base">Have a question or want to collaborate? Reach out to us at either of the addresses below!</p>
                   
                   <div className="flex flex-col gap-4">
-                    <a href="https://voyageai-app.vercel.app/" className="flex items-center justify-center p-5 bg-brand-950/50 border border-brand-800 rounded-xl hover:border-brand-500 hover:bg-brand-900 transition-all group">
+                    <div className="flex items-center justify-center p-5 bg-brand-950/50 border border-brand-800 rounded-xl">
                       <div className="flex flex-col">
-                        <span className="text-brand-50 font-bold text-lg group-hover:text-brand-400 transition-colors">Supriyo Suvam</span>
+                        <span className="text-brand-50 font-bold text-lg">Supriyo Suvam</span>
                         <span className="text-brand-500 text-xs mt-1">suvamsupriyo@gmail.com</span>
                       </div>
-                    </a>
+                    </div>
 
-                    <a href="https://voyageai-app.vercel.app/" className="flex items-center justify-center p-5 bg-brand-950/50 border border-brand-800 rounded-xl hover:border-brand-500 hover:bg-brand-900 transition-all group">
+                    <div className="flex items-center justify-center p-5 bg-brand-950/50 border border-brand-800 rounded-xl">
                       <div className="flex flex-col">
-                        <span className="text-brand-50 font-bold text-lg group-hover:text-brand-400 transition-colors">Mitali Swaroop</span>
+                        <span className="text-brand-50 font-bold text-lg">Mitali Swaroop</span>
                         <span className="text-brand-500 text-xs mt-1">mitaliswaroop182@gmail.com</span>
                       </div>
-                    </a>
+                    </div>
                   </div>
                 </div>
               )}
