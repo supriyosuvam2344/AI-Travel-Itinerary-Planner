@@ -145,7 +145,8 @@ export default function App() {
         }
       }
       if (!response.ok) {
-        throw new Error(data?.error || 'Failed to generate itinerary');
+        const fallback = `Failed to generate itinerary (HTTP ${response.status})`;
+        throw new Error(data?.error || fallback);
       }
 
       if (!data) {
