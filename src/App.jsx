@@ -135,9 +135,21 @@ export default function App() {
         }),
       });
 
-      const data = await response.json();
+      const raw = await response.text();
+      let data = null;
+      if (raw) {
+        try {
+          data = JSON.parse(raw);
+        } catch {
+          throw new Error('Server returned an invalid response. Please try again.');
+        }
+      }
       if (!response.ok) {
         throw new Error(data?.error || 'Failed to generate itinerary');
+      }
+
+      if (!data) {
+        throw new Error('Received an empty response from server');
       }
 
       setItinerary(data);
