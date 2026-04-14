@@ -128,15 +128,29 @@ Use your knowledge of local prices and popular spots. Group activities logically
         },
       });
 
-      if (!response.text) {
+      const responseText = typeof response.text === "function" ? response.text() : response.text;
+      if (!responseText || !String(responseText).trim()) {
         return res.status(502).json({ error: "No response from AI provider" });
       }
 
-      const data = JSON.parse(response.text);
+      const cleanedText = String(responseText)
+        .trim()
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/\s*```$/, "")
+        .trim();
+
+      let data;
+      try {
+        data = JSON.parse(cleanedText);
+      } catch {
+        return res.status(502).json({ error: "AI returned invalid JSON" });
+      }
+
       return res.json(data);
     } catch (error) {
       console.error("Failed to generate itinerary", error);
-      return res.status(500).json({ error: "Failed to generate itinerary" });
+      return res.status(500).json({ error: error?.message || "Failed to generate itinerary" });
     }
   });
 
