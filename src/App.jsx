@@ -9,6 +9,7 @@ import ItineraryView from './components/ItineraryView';
 import AppFooter from './components/AppFooter';
 import LegalModal from './components/LegalModal';
 import { useTripPlanner } from './hooks/useTripPlanner';
+import DestinationRecommender from './components/DestinationRecommender';
 
 export default function App() {
   const navigate = useNavigate();
@@ -40,9 +41,19 @@ export default function App() {
       <header className="relative z-10 p-6 flex justify-between items-center max-w-7xl mx-auto">
         <BrandLogo onClick={handleStartFresh} />
         <nav className="hidden md:flex gap-8 text-sm font-medium text-brand-400">
-          <a href="#" className="hover:text-brand-50 transition-colors">Destinations</a>
+          <button 
+            onClick={() => navigate('/')} 
+            className="hover:text-brand-50 transition-colors"
+          >
+            Home
+          </button>
+          <button 
+            onClick={() => navigate('/destinations')} 
+            className="hover:text-brand-50 transition-colors"
+          >
+            Your Vibe
+          </button>
           <a href="#" className="hover:text-brand-50 transition-colors">How it works</a>
-          <a href="#" className="hover:text-brand-50 transition-colors">Pricing</a>
         </nav>
         <button 
           onClick={() => navigate('/auth')}
@@ -56,6 +67,7 @@ export default function App() {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<HeroSection onStart={() => navigate('/plan')} />} />
+            <Route path="/destinations" element={<DestinationRecommender />} /> 
             <Route
               path="/plan"
               element={
