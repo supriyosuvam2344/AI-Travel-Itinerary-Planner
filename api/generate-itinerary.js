@@ -1,5 +1,81 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000; // 2 seconds
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function generateWithRetry(ai, prompt, retries = MAX_RETRIES) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              destination: { type: Type.STRING },
+              duration: { type: Type.NUMBER },
+              budget: { type: Type.STRING },
+              totalEstimatedCost: { type: Type.STRING },
+              currency: { type: Type.STRING },
+              dailyPlans: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    day: { type: Type.NUMBER },
+                    theme: { type: Type.STRING },
+                    activities: {
+                      type: Type.ARRAY,
+                      items: {
+                        type: Type.OBJECT,
+                        properties: {
+                          time: { type: Type.STRING },
+                          title: { type: Type.STRING },
+                          description: { type: Type.STRING },
+                          cost: { type: Type.STRING },
+                          location: { type: Type.STRING },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              travelTips: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+              },
+              budgetBreakdown: {
+                type: Type.OBJECT,
+                properties: {
+                  accommodation: { type: Type.STRING },
+                  food: { type: Type.STRING },
+                  activities: { type: Type.STRING },
+                  transport: { type: Type.STRING },
+                },
+              },
+            },
+            required: ["destination", "dailyPlans", "budgetBreakdown"],
+          },
+        },
+      });
+      return response;
+    } catch (error) {
+      if (attempt < retries && (error.message.includes('503') || error.message.includes('UNAVAILABLE') || error.message.includes('high demand'))) {
+        console.log(`Attempt ${attempt} failed, retrying in ${RETRY_DELAY}ms...`);
+        await sleep(RETRY_DELAY);
+      } else {
+        throw error;
+      }
+    }
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -57,60 +133,7 @@ Your response must be a valid JSON object matching this structure:
 
 Use your knowledge of local prices and popular spots. Group activities logically and ensure the total cost fits within the budget.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            destination: { type: Type.STRING },
-            duration: { type: Type.NUMBER },
-            budget: { type: Type.STRING },
-            totalEstimatedCost: { type: Type.STRING },
-            currency: { type: Type.STRING },
-            dailyPlans: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  day: { type: Type.NUMBER },
-                  theme: { type: Type.STRING },
-                  activities: {
-                    type: Type.ARRAY,
-                    items: {
-                      type: Type.OBJECT,
-                      properties: {
-                        time: { type: Type.STRING },
-                        title: { type: Type.STRING },
-                        description: { type: Type.STRING },
-                        cost: { type: Type.STRING },
-                        location: { type: Type.STRING },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            travelTips: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
-            },
-            budgetBreakdown: {
-              type: Type.OBJECT,
-              properties: {
-                accommodation: { type: Type.STRING },
-                food: { type: Type.STRING },
-                activities: { type: Type.STRING },
-                transport: { type: Type.STRING },
-              },
-            },
-          },
-          required: ["destination", "dailyPlans", "budgetBreakdown"],
-        },
-      },
-    });
+    const response = await generateWithRetry(ai, prompt);
 
     const responseText = typeof response.text === "function" ? response.text() : response.text;
     if (!responseText || !String(responseText).trim()) {
